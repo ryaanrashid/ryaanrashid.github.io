@@ -4,7 +4,7 @@ const cellElements = document.querySelectorAll('[data-cell]')
 const winningMessageElement = document.getElementById('winningMessage')
 const winningMessageTextElement = document.querySelector('[data-winning-message-text]')
 const newGameButton = document.getElementById('newGameButton')
-let circleTurn
+const gameCodeButton = document.getElementById('gameCodeButton')
 
 cellElements.forEach(cell => {
 	cell.addEventListener('click', handleClick, {once:true})
@@ -12,15 +12,24 @@ cellElements.forEach(cell => {
 
 newGameButton.addEventListener('click', startGame)
 
-function startGame() {
-	circleTurn = false
+gameCodeButton.addEventListener('click', gameCodeEntered)
+
+function startGame(code = "ss") {
 	// populate cells with words
-	fillCells()
+	fillCells(code)
+
+	// unclick all words
 	cellElements.forEach(cell => {
 		cell.classList.remove('clicked')
 		cell.addEventListener('click', handleClick, {once:true})
 	})
-	winningMessageElement.classList.remove('show')
+}
+
+function gameCodeEntered() {
+	code = document.getElementById("gameCode").value
+
+	// will start new game with game code
+	startGame(code)
 }
 
 function handleClick(e) {
@@ -32,11 +41,14 @@ function addWord(cell, word) {
 	cell.innerHTML = word
 }
 
-function fillCells() {
+function fillCells(userSeed) {
+	// Use a seed
+	var myrng = new Math.seedrandom(userSeed);
+
 	// Generate the sequence of words from the wordlist being used
 	words = []
 	while (words.length < wordList.length) {
-		newWord = Math.floor(Math.random() * wordList.length)
+		newWord = Math.floor(myrng() * wordList.length)
 		if(words.includes(newWord)){
 		} else {
 			words.push(newWord)
